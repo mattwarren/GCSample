@@ -111,6 +111,20 @@ void WriteBarrier(Object ** dst, Object * ref)
     ErectWriteBarrier(dst, ref);
 }
 
+void PrintGCStats(GCHeap *pGCHeap)
+{
+	printf("\nGC Stats:\n");
+	printf("  GetGcCount:            %i\n", pGCHeap->GetGcCount());
+	printf("    Gen0: %i, Gen1: %i, Gen2: %i, Gen3(LOH): %i\n", 
+				pGCHeap->CollectionCount(0), pGCHeap->CollectionCount(1), pGCHeap->CollectionCount(2), pGCHeap->CollectionCount(3));
+	printf("  GetLastGCDuration(0):  %i\n", pGCHeap->GetLastGCDuration(0));
+	printf("  GetLastGCDuration(1):  %i\n", pGCHeap->GetLastGCDuration(1));
+	printf("  GetLastGCDuration(2):  %i\n", pGCHeap->GetLastGCDuration(2));
+	printf("  GetNumberOfHeaps:      %i\n", pGCHeap->GetNumberOfHeaps());
+	printf("  GetHomeHeapNumber:     %i\n", pGCHeap->GetHomeHeapNumber());
+	printf("  GetTotalBytesInUse:    %i\n", pGCHeap->GetTotalBytesInUse());
+}
+
 int __cdecl main(int argc, char* argv[])
 {
     //
@@ -219,6 +233,12 @@ int __cdecl main(int argc, char* argv[])
         // Uncomment this assert to see how GC triggered inside AllocateObject moved objects around
         // assert(pBefore == pAfter);
 
+        if (pBefore != pAfter)
+		{
+            printf("%8i) pBefore = 0x%08x, pAfter = 0x%08x, diff = 0x%08x (%i)\n", i, pBefore, pAfter, pBefore - pAfter, pBefore - pAfter);
+            PrintGCStats(pGCHeap);
+		}
+
         // Store the newly allocated object into a field using WriteBarrier
         WriteBarrier(&(((My *)ObjectFromHandle(oh))->m_pOther1), p);
     }
@@ -231,8 +251,17 @@ int __cdecl main(int argc, char* argv[])
     // Destroy the strong handle so that nothing will be keeping out object alive
     DestroyGlobalHandle(oh);
 
+    // Verify that the weak handle has not yet been cleared (i.e. before the GC has run)
+    assert(ObjectFromHandle(ohWeak) != NULL);
+
+	printf("\nBEFORE Final Call to pGCHeap->GarbageCollect()");
+	PrintGCStats(pGCHeap);
+
     // Explicitly trigger full GC
     pGCHeap->GarbageCollect();
+
+	printf("\nAFTER  Final Call to pGCHeap->GarbageCollect()");
+	PrintGCStats(pGCHeap);
 
     // Verify that the weak handle got cleared by the GC
     assert(ObjectFromHandle(ohWeak) == NULL);
