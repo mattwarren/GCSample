@@ -147,7 +147,7 @@ void GCScan::GcWeakPtrScanBySingleThread( int condemned, int max_gen, ScanContex
 {
     UNREFERENCED_PARAMETER(condemned);
     UNREFERENCED_PARAMETER(max_gen);
-    GCToEEInterface::SyncBlockCacheWeakPtrScan(&CheckPromoted, (uintptr_t)sc, 0);
+    //GCToEEInterface::SyncBlockCacheWeakPtrScan(&CheckPromoted, (uintptr_t)sc, 0);
 }
 
 void GCScan::GcScanSizedRefs(promote_func* fn, int condemned, int max_gen, ScanContext* sc)

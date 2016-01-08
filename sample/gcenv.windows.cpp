@@ -389,7 +389,7 @@ bool GCToOSInterface::CreateThread(GCThreadFunction function, void* param, GCThr
     stubParam.GCThreadFunction = function;
     stubParam.GCThreadParam = param;
 
-    HANDLE gc_thread = ::CreateThread(NULL, 0, GCThreadStub, &stubParam, CREATE_SUSPENDED, &thread_id);
+    HANDLE gc_thread = ::CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)GCThreadStub, &stubParam, CREATE_SUSPENDED, &thread_id);
 
     if (!gc_thread)
     {

@@ -1,0 +1,11 @@
+syntax: glob
+*.user
+*.suo
+bin
+obj
+Debug
+Release
+*.sdf
+*.opensdf
+*.ipch
+*.png
