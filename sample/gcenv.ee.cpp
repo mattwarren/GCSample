@@ -124,6 +124,7 @@ void ThreadStore::AttachCurrentThread()
 
 void GCToEEInterface::SuspendEE(GCToEEInterface::SUSPEND_REASON reason)
 {
+    printf("\nGCToEEInterface::SuspendEE(SUSPEND_REASON = %i) called\n", reason);
     GCHeap::GetGCHeap()->SetGCInProgress(TRUE);
 
     // TODO: Implement
@@ -131,30 +132,36 @@ void GCToEEInterface::SuspendEE(GCToEEInterface::SUSPEND_REASON reason)
 
 void GCToEEInterface::RestartEE(bool bFinishedGC)
 {
+    printf("GCToEEInterface::RestartEE(bFinishedGC = %s) called\n\n", bFinishedGC ? "TRUE" : "FALSE");
     // TODO: Implement
 
     GCHeap::GetGCHeap()->SetGCInProgress(FALSE);
 }
 
-void GCToEEInterface::GcScanRoots(promote_func* fn,  int condemned, int max_gen, ScanContext* sc)
+void GCToEEInterface::GcScanRoots(promote_func* fn, int condemned, int max_gen, ScanContext* sc)
 {
+    printf("GCToEEInterface::GcScanRoots(condemned = %i, max_gen = %i)\n", condemned, max_gen);
     // TODO: Implement - Scan stack roots on given thread
 }
 
 void GCToEEInterface::GcStartWork(int condemned, int max_gen)
 {
+    printf("GCToEEInterface::GcStartWork(condemned = %i, max_gen = %i)\n", condemned, max_gen);
 }
 
 void GCToEEInterface::AfterGcScanRoots(int condemned, int max_gen, ScanContext* sc)
 {
+    printf("GCToEEInterface::AfterGcScanRoots(condemned = %i, max_gen = %i)\n", condemned, max_gen);
 }
 
 void GCToEEInterface::GcBeforeBGCSweepWork()
 {
+    printf("GCToEEInterface::GcBeforeBGCSweepWork()\n");
 }
 
 void GCToEEInterface::GcDone(int condemned)
 {
+    printf("GCToEEInterface::GcDone(condemned = %i)\n", condemned);
 }
 
 bool GCToEEInterface::RefCountedHandleCallbacks(Object * pObject)
@@ -200,6 +207,7 @@ void GCToEEInterface::AttachCurrentThread()
 
 void GCToEEInterface::GcEnumAllocContexts (enum_alloc_context_func* fn, void* param)
 {
+    printf("GCToEEInterface::GcEnumAllocContexts(..)\n");
     Thread * pThread = NULL;
     while ((pThread = ThreadStore::GetThreadList(pThread)) != NULL)
     {
@@ -223,6 +231,7 @@ void FinalizerThread::EnableFinalization()
 {
     // Signal to finalizer thread that there are objects to finalize
     // TODO: Implement for finalization
+    printf("FinalizerThread::EnableFinalization(..)\n");
 }
 
 bool FinalizerThread::HaveExtraWorkForFinalizer()
